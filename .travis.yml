@@ -1,0 +1,75 @@
+sudo: required
+
+python:
+  - "3.4"
+  - "pypy-5.3.1"
+
+services:
+  - docker
+
+before_install:
+  # Install dependencies
+  - gem update --system
+  - sudo apt-get install -y python3.4
+  - sudo apt-get install --upgrade -y python-pip
+  - sudo apt-get install jq
+  - sudo pip install --user virtualenv
+  # Create a virtual environment for AWS CLI
+  - virtualenv my_py3 --python=/usr/bin/python3.4
+  - source my_py3/bin/activate
+  - pip install --upgrade awscli
+  - pip install --upgrade awsebcli
+  # Set AWS information
+  - aws configure set aws_access_key_id $AWS_ACCESS_KEY
+  - aws configure set aws_secret_access_key $AWS_SECRET_KEY
+  - aws configure set default.region $DEPLOYMENT_REGION
+  - aws configure set metadata_service_timeout 1200
+  - aws configure set metadata_service_num_attempts 3
+  - aws configure list
+
+script: 'true'
+
+after_success:
+  
+
+  - docker build -t node-project .
+
+  # - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  
+  # - docker tag "$DOCKER_USERNAME"/node-project:$TAG "$DOCKER_USERNAME"/node-project:latest
+
+  # - docker push "$DOCKER_USERNAME"/node-project
+  # Push image to Docker Hub and update EB environment
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+    docker tag node-project $DOCKER_USERNAME/node-project:production; 
+    docker push $DOCKER_USERNAME/node-project:production;
+    chmod +x upload_image_to_elastcbeanstalk.sh;
+    ./upload_image_to_elastcbeanstalk.sh production $DEPLOYMENT_BUCKET $ENVIRONMENT_ID $APP_NAME $DEPLOYMENT_REGION $IMAGE_NAME $DEPLOYMENT_ENV_NAME $DOCKER_USERNAME $DOCKER_REPOSITORY $DOCKER_PASSWORD $DOCKER_EMAIL;
+    fi
+# Deploy to EBS
+# deploy:
+#   - provider: elasticbeanstalk
+#     region: "us-east-1"
+#     app: "travis-testing"
+#     env: "TravisTesting-env"
+#     bucket_name: "elasticbeanstalk-us-east-1-264795727753"
+#     bucket_path: "TravisTesting-env"
+#     on:
+#       branch: master
+#     access_key_id:
+#       secure: "$AWS_ACCESS_KEY"
+#     secret_access_key:
+#       secure: "$AWS_SECRET_KEY"
+
+env:
+  global:
+    - APP_NAME=travis-testing
+    # - DOCKER_USERNAME=bikeshrestha
+    - DOCKER_REPOSITORY=node-project
+    - IMAGE_NAME=node-project
+    # - BUCKET_NAME=TravisTesting-env
+    - DEPLOYMENT_REGION=us-east-1
+    - DEPLOYMENT_BUCKET=elasticbeanstalk-us-east-1-264795727753
+    - DEPLOYMENT_ENV_NAME=TravisTesting-env
+    - DOCKER_EMAIL=srpbsm@gmail.com
+    - TAG=development # must development for development branch

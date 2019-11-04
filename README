@@ -1,0 +1,17 @@
+export DOCKER_USERNAME=<username_docker>
+
+export COMMIT_HASH=$(git log -1 --format=%h)
+
+#BUILD
+docker build -t $DOCKER_USERNAME/node-project:$(git log -1 --format=%h) .
+
+#RUN
+docker run -p 8080:8080 -d $DOCKER_USERNAME/node-project:$(git log -1 --format=%h)
+
+#PUSH
+docker login
+docker tag $DOCKER_USERNAME/node-project:$(git log -1 --format=%h) $DOCKER_USERNAME/node-project:latest
+docker push $DOCKER_USERNAME/node-project
+
+
+

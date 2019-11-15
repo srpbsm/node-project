@@ -1,24 +1,24 @@
 {
-    "AWSEBDockerrunVersion":2,
-    "containerDefinitions":[
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
+    {
+      "name": "node-project",
+      "image": "bikeshrestha/node-project:latest",
+      "hostname": "node-project",
+      "essential": true,
+      "portMappings": [
         {
-            "name":"node-project",
-            "image":"bikeshrestha/node-project:$TAGE",
-            "hostname":"node-project",
-            "essential":true,
-            "portMappings":[
-                {
-                    "hostPort":80,
-                    "containerPort":8080
-                }
-            ],
-            "memory":400,
-            "environment":[
-                {
-                    "name":"TAG",
-                    "value":"$TAG"
-                }
-            ]
+          "hostPort": 80,
+          "containerPort": 8080
         }
-    ]
+      ],
+      "memory": 400,
+      "environment": [
+        {
+          "name": "TAG",
+          "value": "$TAG"
+        }
+      ]
+    }
+  ]
 }

@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-project
+spec:
+  selector:
+    matchLabels:
+      app: node-project
+  replicas: 1
+  template: # template for the pods
+    metadata:
+      labels:
+        app: node-project
+    spec:
+      containers:
+      - name: node-project
+        image: ${REPOSITORY_TAG}
+        env:
+        - name: TAG
+          value: production-microservice
+        # Using this as a way to avoid having to bother pushing images to registry.
+        imagePullPolicy: Never
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-node-project
+
+spec:
+  # This defines which pods are going to be represented by this Service
+  # The service becomes a network endpoint for either other services
+  # or maybe external users to connect to (eg browser)
+  selector:
+    app: node-project
+
+  ports:
+    - name: http
+      port: 8080
+      nodePort: 30020
+
+  type: NodePort

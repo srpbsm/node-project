@@ -6,6 +6,7 @@ pipeline {
    //   YOUR_DOCKERHUB_USERNAME="virtualpairprogrammers"
      SERVICE_NAME = "node-project"
      REPOSITORY_TAG="${YOUR_DOCKERHUB_USERNAME}/${ORGANIZATION_NAME}-${SERVICE_NAME}:${BUILD_ID}"
+     DOCKER_IMAGE = ''
    }
 
    stages {
@@ -24,9 +25,20 @@ pipeline {
 
       stage('Build and Push Image') {
          steps {
-           sh 'docker image build -t ${REPOSITORY_TAG} .'
+           script {
+          DOCKER_IMAGE = docker.build "$REPOSITORY_TAG"
+        }
          }
       }
+      stage('Deploy Image') {
+        steps{
+          script {
+            docker.withRegistry( '', 'DOCKER_HUB' ) {
+              dockerImage.push()
+          }
+        }
+      }
+    }
 
       // stage('Deploy to Cluster') {
       //     steps {

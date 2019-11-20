@@ -34,7 +34,7 @@ pipeline {
         steps{
           script {
             docker.withRegistry( '', 'DOCKER_HUB' ) {
-              dockerImage.push()
+              DOCKER_IMAGE.push()
           }
         }
       }

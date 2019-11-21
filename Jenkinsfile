@@ -40,17 +40,13 @@ pipeline {
       }
     }
 
-        stage('Remove Unused docker image') {
-      steps{
-        sh "docker rmi $REPOSITORY_TAG"
-      }
-    }
+
 
 
     stage('deploy to kubernetes cluster') {
       steps {
         sh "chmod +x changeTag.sh"
-        sh "./changeTag.sh $REPOSITORY_TAG"
+        sh "./changeTag.sh ${REPOSITORY_TAG}"
         sshagent(['kop-machine']) {
       sh "scp -o StrictHostKeyChecking=no deploy.yaml ubuntu@3.10.180.21:/home/ubuntu"
       script{
@@ -63,6 +59,13 @@ pipeline {
 }
       }
     }
+
+        stage('Remove Unused docker image') {
+      steps{
+        sh "docker rmi $REPOSITORY_TAG"
+      }
+    }
+
 
       // stage('Deploy to Cluster') {
       //     steps {

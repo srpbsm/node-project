@@ -40,6 +40,12 @@ pipeline {
       }
     }
 
+        stage('Remove Unused docker image') {
+      steps{
+        sh "docker rmi $REPOSITORY_TAG"
+      }
+    }
+
       // stage('Deploy to Cluster') {
       //     steps {
       //               sh 'envsubst < ${WORKSPACE}/deploy.yaml | kubectl apply -f -'

@@ -46,6 +46,24 @@ pipeline {
       }
     }
 
+
+    stage('deploy to kubernetes cluster') {
+      steps {
+        sh "chmod +x changeTag.sh"
+        sh "./changeTag.sh $REPOSITORY_TAG"
+        sshagent(['kop-machine']) {
+      sh "scp -o StrictHostKeyChecking=no deploy.yaml ubuntu@3.10.180.21:/home/ubuntu"
+      script{
+        try{
+          sh "ssh ubuntu@3.10.180.21 kubectl apply -f deploy.yaml"
+        }catch(error){
+          sh "ssh ubuntu@3.10.180.21 kubectl create -f deploy.yaml"
+        }
+      }
+}
+      }
+    }
+
       // stage('Deploy to Cluster') {
       //     steps {
       //               sh 'envsubst < ${WORKSPACE}/deploy.yaml | kubectl apply -f -'

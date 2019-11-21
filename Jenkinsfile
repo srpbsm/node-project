@@ -46,7 +46,7 @@ pipeline {
     stage('deploy to kubernetes cluster') {
       steps {
         sh "chmod +x changeTag.sh"
-        sh "./changeTag.sh ${REPOSITORY_TAG}"
+        sh "./changeTag.sh ${BUILD_ID}"
         sshagent(['kop-machine']) {
       sh "scp -o StrictHostKeyChecking=no deploy.yaml ubuntu@3.10.180.21:/home/ubuntu"
       script{

@@ -21,7 +21,7 @@ app.get("/", (req, res) => {
     port: JSON.stringify(PORT),
     testing_env: JSON.stringify(process.env.TAG),
     kube: "deployment to kubernetes cluster",
-    working: 'testing second deployment'
+    working: 'testing second deployment in develop branch'
   })
 })
 

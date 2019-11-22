@@ -1,4 +1,4 @@
-currentBuild.displyaName = "node-project-#"+currentBuild.numbergit 
+// currentBuild.displyaName = "node-project-#"+currentBuild.numbergit 
 
 pipeline {
    agent any

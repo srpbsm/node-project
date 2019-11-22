@@ -72,11 +72,11 @@ pipeline {
       }
     }
 
-    state('environment checking'){
-      steps{
+    // state('environment checking'){
+    //   steps{
         
-      }
-    }
+    //   }
+    // }
 
 
       // stage('Deploy to Cluster') {

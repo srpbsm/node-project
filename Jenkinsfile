@@ -1,3 +1,5 @@
+// currentBuild.displyaName = "node-project-#"+currentBuild.numbergit 
+
 pipeline {
    agent any
 
@@ -13,7 +15,9 @@ pipeline {
       stage('Preparation') {
          steps {
             cleanWs()
-            git credentialsId: 'GitHub-accesstoken', url: "https://github.com/${ORGANIZATION_NAME}/${SERVICE_NAME}"
+            // git branch: 'develop', credentialsId: 'GitHub-accesstoken', url: "https://github.com/${ORGANIZATION_NAME}/${SERVICE_NAME}"
+            git credentialsId: 'GitHub', url: "https://github.com/${ORGANIZATION_NAME}/${SERVICE_NAME}"
+            checkout scm
             // git credentialsId: 'GitHub', url: 'https://github.com/srpbsm/node-project'
          }
       }
@@ -40,6 +44,8 @@ pipeline {
       }
     }
 
+    
+
 
 
 
@@ -47,7 +53,7 @@ pipeline {
       steps {
         sh "chmod +x changeTag.sh"
         sh "./changeTag.sh ${BUILD_ID}"
-        sshagent(['kop-machine']) {
+        sshagent(['kops-machine']) {
       sh "scp -o StrictHostKeyChecking=no deploy.yaml ubuntu@3.10.180.21:/home/ubuntu"
       script{
         try{
@@ -65,6 +71,12 @@ pipeline {
         sh "docker rmi $REPOSITORY_TAG"
       }
     }
+
+    // state('environment checking'){
+    //   steps{
+        
+    //   }
+    // }
 
 
       // stage('Deploy to Cluster') {

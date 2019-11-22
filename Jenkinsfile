@@ -16,7 +16,7 @@ pipeline {
          steps {
             cleanWs()
             // git branch: 'develop', credentialsId: 'GitHub-accesstoken', url: "https://github.com/${ORGANIZATION_NAME}/${SERVICE_NAME}"
-            git credentialsId: 'GitHub-accesstoken', url: "https://github.com/${ORGANIZATION_NAME}/${SERVICE_NAME}"
+            git credentialsId: 'GitHub', url: "https://github.com/${ORGANIZATION_NAME}/${SERVICE_NAME}"
             checkout scm
             // git credentialsId: 'GitHub', url: 'https://github.com/srpbsm/node-project'
          }
@@ -53,7 +53,7 @@ pipeline {
       steps {
         sh "chmod +x changeTag.sh"
         sh "./changeTag.sh ${BUILD_ID}"
-        sshagent(['kop-machine']) {
+        sshagent(['kops-machine']) {
       sh "scp -o StrictHostKeyChecking=no deploy.yaml ubuntu@3.10.180.21:/home/ubuntu"
       script{
         try{
@@ -74,16 +74,7 @@ pipeline {
 
     state('environment checking'){
       steps{
-        @echo off
-echo GIT_COMMIT %GIT_COMMIT% 
-echo GIT_BRANCH %GIT_BRANCH%
-echo GIT_LOCAL_BRANCH %GIT_LOCAL_BRANCH%
-echo GIT_PREVIOUS_COMMIT %GIT_PREVIOUS_COMMIT%
-echo GIT_PREVIOUS_SUCCESSFUL_COMMIT %GIT_PREVIOUS_SUCCESSFUL_COMMIT%
-echo GIT_URL %GIT_URL%
-echo GIT_URL_N - %GIT_URL_N%
-echo GIT_AUTHOR_NAME %GIT_AUTHOR_NAME%
-echo GIT_COMMITTER_EMAIL %GIT_COMMITTER_EMAIL%
+        
       }
     }
 

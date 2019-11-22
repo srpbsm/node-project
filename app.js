@@ -20,7 +20,8 @@ app.get("/", (req, res) => {
     message: "travis auto bipingingingingignig",
     port: JSON.stringify(PORT),
     testing_env: JSON.stringify(process.env.TAG),
-    kube: "deployment to kubernetes cluster"
+    kube: "deployment to kubernetes cluster",
+    working: 'testing second deployment'
   })
 })
 

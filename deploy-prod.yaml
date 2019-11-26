@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-deployment-prod
+  labels:
+    app: node-project-prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-project-prod
+  template:
+    metadata:
+      labels:
+        app: node-project-prod
+        labels: "0"
+    spec:
+      containers:
+        - name: node-project-prod
+          image: bikeshrestha/srpbsm-node-project:REPOSITORY_TAG
+          envFrom:
+            - configMapRef:
+                name: node-project-config-v1
+---
+kind: Service
+apiVersion: v1
+metadata:
+  # Unique key of the Service instance
+  name: service-node
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+      nodePort: 30083
+  selector:
+    app: node-project
+    labels: "0"
+  type: NodePort

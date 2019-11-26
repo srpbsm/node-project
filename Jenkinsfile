@@ -45,7 +45,44 @@ pipeline {
     }
 
     
-
+    stage('Deliver for development') {
+            when {
+                branch 'develop'
+            }
+            steps {
+        sh "chmod +x changeTag.sh"
+        sh "./changeTag.sh ${BUILD_ID}"
+        sshagent(['SSH-KOPS']) {
+      sh "scp -o StrictHostKeyChecking=no deploy.yaml ubuntu@3.10.180.21:/home/ubuntu"
+      script{
+        try{
+          sh "ssh ubuntu@3.10.180.21 kubectl apply -f deploy.yaml"
+        }catch(error){
+          sh "ssh ubuntu@3.10.180.21 kubectl create -f deploy.yaml"
+        }
+      }
+}
+      }
+        }
+        stage('Deploy for production') {
+            when {
+                branch 'master'
+            }
+             steps {
+        sh "chmod +x changeTag.sh"
+        sh "./changeTag.sh ${BUILD_ID}"
+        sshagent(['SSH-KOPS']) {
+      sh "scp -o StrictHostKeyChecking=no deploy-prod.yaml ubuntu@3.10.180.21:/home/ubuntu"
+      script{
+        try{
+          sh "ssh ubuntu@3.10.180.21 kubectl apply -f deploy.yaml"
+        }catch(error){
+          sh "ssh ubuntu@3.10.180.21 kubectl create -f deploy.yaml"
+        }
+      }
+}
+      }
+        }
 
 
 

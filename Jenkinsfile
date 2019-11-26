@@ -75,9 +75,9 @@ pipeline {
       sh "scp -o StrictHostKeyChecking=no deploy-prod.yaml ubuntu@3.10.180.21:/home/ubuntu"
       script{
         try{
-          sh "ssh ubuntu@3.10.180.21 kubectl apply -f deploy.yaml"
+          sh "ssh ubuntu@3.10.180.21 kubectl apply -f deploy-prod.yaml"
         }catch(error){
-          sh "ssh ubuntu@3.10.180.21 kubectl create -f deploy.yaml"
+          sh "ssh ubuntu@3.10.180.21 kubectl create -f deploy-prod.yaml"
         }
       }
 }

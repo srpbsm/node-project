@@ -26,7 +26,7 @@ kind: Service
 apiVersion: v1
 metadata:
   # Unique key of the Service instance
-  name: service-node
+  name: service-node-prod
 spec:
   ports:
     - name: http

@@ -70,7 +70,7 @@ pipeline {
             }
              steps {
         sh "chmod +x changeTag1.sh"
-        sh "./changeTag.sh ${BUILD_ID}"
+        sh "./changeTag1.sh ${BUILD_ID}"
         sshagent(['SSH-KOPS']) {
       sh "scp -o StrictHostKeyChecking=no deploy-prod.yaml ubuntu@3.10.180.21:/home/ubuntu"
       script{

@@ -31,14 +31,14 @@ pipeline {
          }
       }
 
-      stage('Test image') {
-        /* Ideally, we would run a test framework against our image.
-         * For this example, we're using a Volkswagen-type approach ;-) */
+      // stage('Test image') {
+      //   /* Ideally, we would run a test framework against our image.
+      //    * For this example, we're using a Volkswagen-type approach ;-) */
 
-        DOCKER_IMAGE.inside {
-            sh 'echo "Tests passed"'
-        }
-      }
+      //   DOCKER_IMAGE.inside {
+      //       sh 'echo "Tests passed"'
+      //   }
+      // }
 
     
     stage('Deliver for development') {

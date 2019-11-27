@@ -4,12 +4,12 @@ pipeline {
    agent any
 
    environment {
-   //   ORGANIZATION_NAME = "fleetman-ci-cd-demo"
-   //   YOUR_DOCKERHUB_USERNAME="virtualpairprogrammers"
+      //   ORGANIZATION_NAME = "fleetman-ci-cd-demo"
+      //   YOUR_DOCKERHUB_USERNAME="virtualpairprogrammers"
      SERVICE_NAME = "node-project"
      BUILD_IMAGE = "${YOUR_DOCKERHUB_USERNAME}/${ORGANIZATION_NAME}-${SERVICE_NAME}"
      DOCKER_IMAGE = ''
-    //  GIT_COMMIT = $(git log -1 --format=%h)
+     //  GIT_COMMIT = $(git log -1 --format=%h)
    }
 
    stages {
@@ -22,11 +22,6 @@ pipeline {
             // git credentialsId: 'GitHub', url: 'https://github.com/srpbsm/node-project'
          }
       }
-      // stage('Build') {
-      //    steps {
-      //       sh '''mvn clean package'''
-      //    }
-      // }
 
       stage('Build Docker Image') {
          steps {
@@ -36,19 +31,27 @@ pipeline {
          }
       }
 
+      stage('Test image') {
+        /* Ideally, we would run a test framework against our image.
+         * For this example, we're using a Volkswagen-type approach ;-) */
+
+        DOCKER_IMAGE.inside {
+            sh 'echo "Tests passed"'
+        }
+      }
 
     
     stage('Deliver for development') {
-            when {
-                branch 'develop'
-            }
+      when {
+          branch 'develop'
+      }
 
       
       steps {
-                  script {
+        script {
             docker.withRegistry( '', 'DOCKER_HUB' ) {
               DOCKER_IMAGE.push("dev-${BUILD_ID}")
-          }
+              }
         sh "chmod +x changeTag.sh"
         sh "./changeTag.sh dev-${BUILD_ID}"
         sshagent(['SSH-KOPS']) {
@@ -61,8 +64,8 @@ pipeline {
             }
           }
         }
+        }
       }
-    }
     }
         stage('Deploy for production') {
             when {

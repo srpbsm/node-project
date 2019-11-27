@@ -22,8 +22,8 @@ app.get("/", (req, res) => {
     testing_env: JSON.stringify(process.env.TAG),
     kube: "deployment to kubernetes cluster",
     working: "testing second deployment in develop branch",
-    master: "only master branch",
-    work:'working'
+    develop: "only develop branch",
+    work:'working after after refactoring'
   })
 })
 

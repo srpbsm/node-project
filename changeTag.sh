@@ -1,2 +1,2 @@
 #!/bin/bash
-sed -i "s/REPOSITORY_TAG/$1/g" $2
+sed -i "s/latest/$1/g" $2

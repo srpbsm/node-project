@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: node-project
-          image: bikeshrestha/srpbsm-node-project:REPOSITORY_TAG
+          image: bikeshrestha/srpbsm-node-project:latest
           envFrom:
             - configMapRef:
                 name: node-project-config-v1

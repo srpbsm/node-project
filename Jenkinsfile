@@ -45,14 +45,14 @@ pipeline {
             }
         }
         sh "chmod +x changeTag.sh"
-        sh "./changeTag.sh dev-${BUILD_ID}"
+        sh "./changeTag.sh dev-${BUILD_ID} deploy-sandbox.yaml"
         sshagent(['SSH-KOPS']) {
-          sh "scp -o StrictHostKeyChecking=no deploy.yaml ubuntu@3.10.180.21:/home/ubuntu"
+          sh "scp -o StrictHostKeyChecking=no deploy-sandbox.yaml ubuntu@3.10.180.21:/home/ubuntu"
           script{
             try{
-              sh "ssh ubuntu@3.10.180.21 kubectl apply -f deploy.yaml"
+              sh "ssh ubuntu@3.10.180.21 kubectl apply -f deploy-sandbox.yaml"
             }catch(error){
-              sh "ssh ubuntu@3.10.180.21 kubectl create -f deploy.yaml"
+              sh "ssh ubuntu@3.10.180.21 kubectl create -f deploy-sandbox.yaml"
             }
           }
         }
@@ -69,15 +69,15 @@ pipeline {
             DOCKER_IMAGE.push("prod-${BUILD_ID}")
           }
         }
-        sh "chmod +x changeTag1.sh"
-        sh "./changeTag1.sh prod-${BUILD_ID}"
+        sh "chmod +x changeTag.sh"
+        sh "./changeTag.sh prod-${BUILD_ID} deploy-production.yaml"
         sshagent(['SSH-KOPS']) {
-          sh "scp -o StrictHostKeyChecking=no deploy-prod.yaml ubuntu@3.10.180.21:/home/ubuntu"
+          sh "scp -o StrictHostKeyChecking=no deploy-production.yaml ubuntu@3.10.180.21:/home/ubuntu"
           script{
             try{
-              sh "ssh ubuntu@3.10.180.21 kubectl apply -f deploy-prod.yaml"
+              sh "ssh ubuntu@3.10.180.21 kubectl apply -f deploy-production.yaml"
             }catch(error){
-              sh "ssh ubuntu@3.10.180.21 kubectl create -f deploy-prod.yaml"
+              sh "ssh ubuntu@3.10.180.21 kubectl create -f deploy-production.yaml"
             }
           }
         }

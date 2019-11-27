@@ -9,7 +9,7 @@ pipeline {
      SERVICE_NAME = "node-project"
      BUILD_IMAGE = "${YOUR_DOCKERHUB_USERNAME}/${ORGANIZATION_NAME}-${SERVICE_NAME}"
      DOCKER_IMAGE = ''
-     GIT_COMMIT = $(git log -1 --format=%h)
+    //  GIT_COMMIT = $(git log -1 --format=%h)
    }
 
    stages {

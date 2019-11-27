@@ -49,21 +49,21 @@ pipeline {
           }
         }
       }
-            steps {
+      steps {
         sh "chmod +x changeTag.sh"
         sh "./changeTag.sh dev-${BUILD_ID}"
         sshagent(['SSH-KOPS']) {
-      sh "scp -o StrictHostKeyChecking=no deploy.yaml ubuntu@3.10.180.21:/home/ubuntu"
-      script{
-        try{
-          sh "ssh ubuntu@3.10.180.21 kubectl apply -f deploy.yaml"
-        }catch(error){
-          sh "ssh ubuntu@3.10.180.21 kubectl create -f deploy.yaml"
+          sh "scp -o StrictHostKeyChecking=no deploy.yaml ubuntu@3.10.180.21:/home/ubuntu"
+          script{
+            try{
+            sh "ssh ubuntu@3.10.180.21 kubectl apply -f deploy.yaml"
+            }catch(error){
+            sh "ssh ubuntu@3.10.180.21 kubectl create -f deploy.yaml"
+            }
+          }
         }
       }
-}
-      }
-        }
+    }
         stage('Deploy for production') {
             when {
                 branch 'master'
@@ -93,26 +93,26 @@ pipeline {
 
 
 
-    stage('deploy to kubernetes cluster') {
-      steps {
-        sh "chmod +x changeTag.sh"
-        sh "./changeTag.sh ${BUILD_ID}"
-        sshagent(['SSH-KOPS']) {
-      sh "scp -o StrictHostKeyChecking=no deploy.yaml ubuntu@3.10.180.21:/home/ubuntu"
-      script{
-        try{
-          sh "ssh ubuntu@3.10.180.21 kubectl apply -f deploy.yaml"
-        }catch(error){
-          sh "ssh ubuntu@3.10.180.21 kubectl create -f deploy.yaml"
-        }
-      }
-}
-      }
-    }
+//     stage('deploy to kubernetes cluster') {
+//       steps {
+//         sh "chmod +x changeTag.sh"
+//         sh "./changeTag.sh ${BUILD_ID}"
+//         sshagent(['SSH-KOPS']) {
+//       sh "scp -o StrictHostKeyChecking=no deploy.yaml ubuntu@3.10.180.21:/home/ubuntu"
+//       script{
+//         try{
+//           sh "ssh ubuntu@3.10.180.21 kubectl apply -f deploy.yaml"
+//         }catch(error){
+//           sh "ssh ubuntu@3.10.180.21 kubectl create -f deploy.yaml"
+//         }
+//       }
+// }
+//       }
+//     }
 
         stage('Remove Unused docker image') {
       steps{
-        sh "docker rmi $REPOSITORY_TAG"
+        sh "docker rmi $BUILD_IMAGE"
       }
     }
 

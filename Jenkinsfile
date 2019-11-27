@@ -42,14 +42,13 @@ pipeline {
             when {
                 branch 'develop'
             }
-                    steps{
-          script {
+
+      
+      steps {
+                  script {
             docker.withRegistry( '', 'DOCKER_HUB' ) {
               DOCKER_IMAGE.push("dev-${BUILD_ID}")
           }
-        }
-      }
-      steps {
         sh "chmod +x changeTag.sh"
         sh "./changeTag.sh dev-${BUILD_ID}"
         sshagent(['SSH-KOPS']) {
@@ -64,18 +63,18 @@ pipeline {
         }
       }
     }
+    }
         stage('Deploy for production') {
             when {
                 branch 'master'
             }
-             steps{
-          script {
+
+             steps {
+                     script {
             docker.withRegistry( '', 'DOCKER_HUB' ) {
               DOCKER_IMAGE.push("prod-${BUILD_ID}")
           }
         }
-      }
-             steps {
         sh "chmod +x changeTag1.sh"
         sh "./changeTag1.sh prod-${BUILD_ID}"
         sshagent(['SSH-KOPS']) {

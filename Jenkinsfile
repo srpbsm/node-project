@@ -7,8 +7,9 @@ pipeline {
    //   ORGANIZATION_NAME = "fleetman-ci-cd-demo"
    //   YOUR_DOCKERHUB_USERNAME="virtualpairprogrammers"
      SERVICE_NAME = "node-project"
-     REPOSITORY_TAG="${YOUR_DOCKERHUB_USERNAME}/${ORGANIZATION_NAME}-${SERVICE_NAME}:${BUILD_ID}"
+     BUILD_IMAGE = "${YOUR_DOCKERHUB_USERNAME}/${ORGANIZATION_NAME}-${SERVICE_NAME}"
      DOCKER_IMAGE = ''
+     GIT_COMMIT = $(git log -1 --format=%h)
    }
 
    stages {
@@ -27,31 +28,30 @@ pipeline {
       //    }
       // }
 
-      stage('Build and Push Image') {
+      stage('Build Docker Image') {
          steps {
            script {
-          DOCKER_IMAGE = docker.build "$REPOSITORY_TAG"
+          DOCKER_IMAGE = docker.build "$BUILD_IMAGE"
         }
          }
       }
-      stage('Deploy Image') {
-        steps{
-          script {
-            docker.withRegistry( '', 'DOCKER_HUB' ) {
-              DOCKER_IMAGE.push()
-          }
-        }
-      }
-    }
+
 
     
     stage('Deliver for development') {
             when {
                 branch 'develop'
             }
+                    steps{
+          script {
+            docker.withRegistry( '', 'DOCKER_HUB' ) {
+              DOCKER_IMAGE.push("dev-${BUILD_ID}")
+          }
+        }
+      }
             steps {
         sh "chmod +x changeTag.sh"
-        sh "./changeTag.sh ${BUILD_ID}"
+        sh "./changeTag.sh dev-${BUILD_ID}"
         sshagent(['SSH-KOPS']) {
       sh "scp -o StrictHostKeyChecking=no deploy.yaml ubuntu@3.10.180.21:/home/ubuntu"
       script{
@@ -68,9 +68,16 @@ pipeline {
             when {
                 branch 'master'
             }
+             steps{
+          script {
+            docker.withRegistry( '', 'DOCKER_HUB' ) {
+              DOCKER_IMAGE.push("prod-${BUILD_ID}")
+          }
+        }
+      }
              steps {
         sh "chmod +x changeTag1.sh"
-        sh "./changeTag1.sh ${BUILD_ID}"
+        sh "./changeTag1.sh prod-${BUILD_ID}"
         sshagent(['SSH-KOPS']) {
       sh "scp -o StrictHostKeyChecking=no deploy-prod.yaml ubuntu@3.10.180.21:/home/ubuntu"
       script{
